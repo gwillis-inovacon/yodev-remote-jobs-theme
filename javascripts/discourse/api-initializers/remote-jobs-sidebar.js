@@ -48,99 +48,68 @@ function showRemoteJobsModal() {
   });
 }
 
-export default apiInitializer("1.8.0", (api) => {
-  api.addSidebarSection(
-    (BaseCustomSidebarSection, BaseCustomSidebarSectionLink) => {
-      const RemoteJobsLink = class extends BaseCustomSidebarSectionLink {
-        get name() {
-          return "remote-jobs";
-        }
+function injectSidebarLink() {
+  // Don't add if already exists
+  if (document.querySelector(".remote-jobs-injected")) {
+    return;
+  }
 
-        get classNames() {
-          return "remote-jobs-sidebar-link";
-        }
+  // Find the sidebar sections container
+  const sidebar = document.querySelector(".sidebar-sections");
+  if (!sidebar) {
+    return;
+  }
 
-        get route() {
-          return null;
-        }
+  // Find a good insertion point - look for existing sections
+  const sections = sidebar.querySelectorAll(".sidebar-section-wrapper");
+  if (sections.length === 0) {
+    return;
+  }
 
-        get href() {
-          return "#";
-        }
+  // Create our link element
+  const linkWrapper = document.createElement("div");
+  linkWrapper.className = "sidebar-section-wrapper remote-jobs-injected";
+  linkWrapper.innerHTML = `
+    <div class="sidebar-section">
+      <div class="sidebar-section-content">
+        <ul class="sidebar-section-links">
+          <li class="sidebar-section-link-wrapper">
+            <a href="#" class="sidebar-section-link sidebar-row remote-jobs-link" title="${settings.remote_jobs_button_text}">
+              <span class="sidebar-section-link-prefix icon">
+                <svg class="fa d-icon d-icon-${settings.remote_jobs_button_icon} svg-icon svg-string" xmlns="http://www.w3.org/2000/svg"><use href="#${settings.remote_jobs_button_icon}"></use></svg>
+              </span>
+              <span class="sidebar-section-link-content-text">${settings.remote_jobs_button_text}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  `;
 
-        get title() {
-          return settings.remote_jobs_button_text;
-        }
+  // Insert after first section (or at position 2 if there are multiple)
+  const insertAfter = sections.length > 1 ? sections[1] : sections[0];
+  insertAfter.parentNode.insertBefore(linkWrapper, insertAfter.nextSibling);
 
-        get text() {
-          return settings.remote_jobs_button_text;
-        }
-
-        get prefixType() {
-          return "icon";
-        }
-
-        get prefixValue() {
-          return settings.remote_jobs_button_icon;
-        }
-
-        get suffixType() {
-          return "icon";
-        }
-
-        get suffixValue() {
-          return "external-link-alt";
-        }
-
-        get suffixCSSClass() {
-          return "remote-jobs-external-icon";
-        }
-      };
-
-      const RemoteJobsSection = class extends BaseCustomSidebarSection {
-        get name() {
-          return "remote-jobs-section";
-        }
-
-        get title() {
-          return "Jobs";
-        }
-
-        get text() {
-          return "Jobs";
-        }
-
-        get collapsedByDefault() {
-          return false;
-        }
-
-        get displaySection() {
-          return settings.remote_jobs_show_in_header;
-        }
-
-        get hideSectionHeader() {
-          return true;
-        }
-
-        get links() {
-          return [new RemoteJobsLink()];
-        }
-      };
-
-      return RemoteJobsSection;
-    },
-    "top"
-  );
-
-  // Handle click on the sidebar link
-  api.onPageChange(() => {
-    const link = document.querySelector(".remote-jobs-sidebar-link a");
-    if (link && !link.dataset.listenerAttached) {
-      link.dataset.listenerAttached = "true";
-      link.addEventListener("click", (e) => {
-        e.preventDefault();
-        showRemoteJobsModal();
-      });
-    }
+  // Add click handler
+  const link = linkWrapper.querySelector(".remote-jobs-link");
+  link.addEventListener("click", (e) => {
+    e.preventDefault();
+    showRemoteJobsModal();
   });
+}
+
+export default apiInitializer("1.8.0", (api) => {
+  if (!settings.remote_jobs_show_in_header) {
+    return;
+  }
+
+  // Inject on page changes
+  api.onPageChange(() => {
+    setTimeout(injectSidebarLink, 100);
+  });
+
+  // Also try on initial load
+  setTimeout(injectSidebarLink, 500);
+  setTimeout(injectSidebarLink, 1000);
+  setTimeout(injectSidebarLink, 2000);
 });
