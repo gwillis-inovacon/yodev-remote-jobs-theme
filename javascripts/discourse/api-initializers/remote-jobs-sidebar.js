@@ -86,22 +86,13 @@ function addRemoteJobsLinkToSidebar() {
     showRemoteJobsModal();
   });
 
-  // Try to insert after "Jobs" link, otherwise append to end
-  const allLinks = sidebarContent.querySelectorAll(".sidebar-section-link-wrapper");
-  let inserted = false;
+  // Try to insert after InovaJobs sidebar button, otherwise append to end
+  const inovaJobsBtn = sidebarContent.querySelector(".inovajobs-sidebar-btn");
 
-  for (const linkWrapper of allLinks) {
-    const linkText = linkWrapper.textContent.toLowerCase().trim();
-    // Look for "jobs" link (but not our own remote jobs)
-    if (linkText === "jobs" || linkText.includes("jobs") && !linkText.includes("remote")) {
-      linkWrapper.insertAdjacentElement("afterend", listItem);
-      console.log("✅ Remote Jobs link inserted after Jobs link");
-      inserted = true;
-      break;
-    }
-  }
-
-  if (!inserted) {
+  if (inovaJobsBtn && inovaJobsBtn.closest(".sidebar-section-link-wrapper")) {
+    inovaJobsBtn.closest(".sidebar-section-link-wrapper").insertAdjacentElement("afterend", listItem);
+    console.log("✅ Remote Jobs link inserted after InovaJobs");
+  } else {
     sidebarContent.appendChild(listItem);
     console.log("✅ Remote Jobs link added to sidebar (end)");
   }
