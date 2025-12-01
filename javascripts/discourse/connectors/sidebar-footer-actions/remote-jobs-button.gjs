@@ -3,11 +3,7 @@ import { action } from "@ember/object";
 import { on } from "@ember/modifier";
 import icon from "discourse/helpers/d-icon";
 
-export default class RemoteJobsIcon extends Component {
-  get shouldShow() {
-    return settings.remote_jobs_show_in_header;
-  }
-
+export default class RemoteJobsButton extends Component {
   @action
   openModal() {
     // Remove existing modal if any
@@ -63,16 +59,13 @@ export default class RemoteJobsIcon extends Component {
   }
 
   <template>
-    {{#if this.shouldShow}}
-      <li class="header-dropdown-toggle remote-jobs-button">
-        <button
-          class="btn btn-flat icon"
-          title={{settings.remote_jobs_button_text}}
-          {{on "click" this.openModal}}
-        >
-          {{icon settings.remote_jobs_button_icon}}
-        </button>
-      </li>
-    {{/if}}
+    <button
+      class="btn btn-flat sidebar-footer-link remote-jobs-sidebar-btn"
+      title={{settings.remote_jobs_button_text}}
+      {{on "click" this.openModal}}
+    >
+      {{icon settings.remote_jobs_button_icon}}
+      <span>{{settings.remote_jobs_button_text}}</span>
+    </button>
   </template>
 }

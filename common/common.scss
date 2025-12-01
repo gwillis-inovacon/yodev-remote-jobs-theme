@@ -1,20 +1,21 @@
-// Remote Jobs Button in Header
-.remote-jobs-button {
-  .btn {
-    padding: 6px 10px;
+// Remote Jobs Button in Sidebar
+.remote-jobs-sidebar-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: var(--primary-medium);
+  transition: all 0.2s ease;
 
-    .d-icon {
-      color: var(--header_primary);
-      font-size: 1.1em;
-    }
+  .d-icon {
+    font-size: 1.1em;
+  }
 
-    &:hover {
-      background: var(--header_primary-low);
-
-      .d-icon {
-        color: var(--tertiary);
-      }
-    }
+  &:hover {
+    background: var(--primary-low);
+    color: var(--primary);
   }
 }
 
