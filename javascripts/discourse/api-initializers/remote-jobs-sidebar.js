@@ -86,9 +86,25 @@ function addRemoteJobsLinkToSidebar() {
     showRemoteJobsModal();
   });
 
-  // Add to sidebar
-  sidebarContent.appendChild(listItem);
-  console.log("✅ Remote Jobs link added to sidebar");
+  // Try to insert after "Jobs" link, otherwise append to end
+  const allLinks = sidebarContent.querySelectorAll(".sidebar-section-link-wrapper");
+  let inserted = false;
+
+  for (const linkWrapper of allLinks) {
+    const linkText = linkWrapper.textContent.toLowerCase().trim();
+    // Look for "jobs" link (but not our own remote jobs)
+    if (linkText === "jobs" || linkText.includes("jobs") && !linkText.includes("remote")) {
+      linkWrapper.insertAdjacentElement("afterend", listItem);
+      console.log("✅ Remote Jobs link inserted after Jobs link");
+      inserted = true;
+      break;
+    }
+  }
+
+  if (!inserted) {
+    sidebarContent.appendChild(listItem);
+    console.log("✅ Remote Jobs link added to sidebar (end)");
+  }
 
   return true;
 }
