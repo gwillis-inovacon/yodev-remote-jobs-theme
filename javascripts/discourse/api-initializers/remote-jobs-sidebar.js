@@ -108,6 +108,7 @@ function initializeWithRetry(maxAttempts = 10, delayMs = 500) {
     console.log(`🔄 Remote Jobs init attempt ${attempts}/${maxAttempts}`);
 
     addRemoteJobsLinkToSidebar();
+    repositionAfterInovaJobs();
 
     if (attempts < maxAttempts) {
       setTimeout(tryInitialize, delayMs * attempts);
@@ -117,12 +118,35 @@ function initializeWithRetry(maxAttempts = 10, delayMs = 500) {
   tryInitialize();
 }
 
+function repositionAfterInovaJobs() {
+  const sidebarContent = document.querySelector("#sidebar-section-content-community");
+  if (!sidebarContent) return;
+
+  const remoteJobsLink = sidebarContent.querySelector(".remote-jobs-sidebar-btn");
+  const inovaJobsBtn = sidebarContent.querySelector(".inovajobs-sidebar-btn");
+
+  if (remoteJobsLink && inovaJobsBtn) {
+    const remoteJobsWrapper = remoteJobsLink.closest(".sidebar-section-link-wrapper");
+    const inovaJobsWrapper = inovaJobsBtn.closest(".sidebar-section-link-wrapper");
+
+    if (remoteJobsWrapper && inovaJobsWrapper) {
+      // Check if already in correct position
+      if (inovaJobsWrapper.nextElementSibling !== remoteJobsWrapper) {
+        inovaJobsWrapper.insertAdjacentElement("afterend", remoteJobsWrapper);
+        console.log("✅ Remote Jobs repositioned after InovaJobs");
+      }
+    }
+  }
+}
+
 function setupObservers() {
-  // Sidebar observer - re-add link if sidebar content changes
+  // Sidebar observer - re-add link if sidebar content changes AND reposition
   const sidebarContent = document.querySelector("#sidebar-section-content-community");
   if (sidebarContent) {
     const sidebarObserver = new MutationObserver(() => {
       addRemoteJobsLinkToSidebar();
+      // Try to reposition after InovaJobs if it was added later
+      setTimeout(repositionAfterInovaJobs, 100);
     });
     sidebarObserver.observe(sidebarContent, {
       childList: true,
