@@ -54,44 +54,29 @@ function injectSidebarLink() {
     return;
   }
 
-  // Find the sidebar sections container
-  const sidebar = document.querySelector(".sidebar-sections");
-  if (!sidebar) {
-    return;
-  }
-
-  // Find a good insertion point - look for existing sections
-  const sections = sidebar.querySelectorAll(".sidebar-section-wrapper");
-  if (sections.length === 0) {
+  // Find the first/main sidebar section's link list (Community section)
+  const mainSection = document.querySelector(".sidebar-section-wrapper .sidebar-section-links");
+  if (!mainSection) {
     return;
   }
 
   // Create our link element
-  const linkWrapper = document.createElement("div");
-  linkWrapper.className = "sidebar-section-wrapper remote-jobs-injected";
-  linkWrapper.innerHTML = `
-    <div class="sidebar-section">
-      <div class="sidebar-section-content">
-        <ul class="sidebar-section-links">
-          <li class="sidebar-section-link-wrapper">
-            <a href="#" class="sidebar-section-link sidebar-row remote-jobs-link" title="${settings.remote_jobs_button_text}">
-              <span class="sidebar-section-link-prefix icon">
-                <svg class="fa d-icon d-icon-${settings.remote_jobs_button_icon} svg-icon svg-string" xmlns="http://www.w3.org/2000/svg"><use href="#${settings.remote_jobs_button_icon}"></use></svg>
-              </span>
-              <span class="sidebar-section-link-content-text">${settings.remote_jobs_button_text}</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
+  const linkItem = document.createElement("li");
+  linkItem.className = "sidebar-section-link-wrapper remote-jobs-injected";
+  linkItem.innerHTML = `
+    <a href="#" class="sidebar-section-link sidebar-row remote-jobs-link" title="${settings.remote_jobs_button_text}">
+      <span class="sidebar-section-link-prefix icon">
+        <svg class="fa d-icon d-icon-${settings.remote_jobs_button_icon} svg-icon svg-string" xmlns="http://www.w3.org/2000/svg"><use href="#${settings.remote_jobs_button_icon}"></use></svg>
+      </span>
+      <span class="sidebar-section-link-content-text">${settings.remote_jobs_button_text}</span>
+    </a>
   `;
 
-  // Insert after first section (or at position 2 if there are multiple)
-  const insertAfter = sections.length > 1 ? sections[1] : sections[0];
-  insertAfter.parentNode.insertBefore(linkWrapper, insertAfter.nextSibling);
+  // Append to the main section's links
+  mainSection.appendChild(linkItem);
 
   // Add click handler
-  const link = linkWrapper.querySelector(".remote-jobs-link");
+  const link = linkItem.querySelector(".remote-jobs-link");
   link.addEventListener("click", (e) => {
     e.preventDefault();
     showRemoteJobsModal();
