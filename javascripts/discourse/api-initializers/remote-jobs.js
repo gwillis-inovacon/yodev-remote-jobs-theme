@@ -1,39 +1,23 @@
 import { apiInitializer } from "discourse/lib/api";
-import { withPluginApi } from "discourse/lib/plugin-api";
 
 export default apiInitializer("1.14.0", (api) => {
-  const siteSettings = api.container.lookup("service:site-settings");
-
   if (!settings.remote_jobs_show_in_header) {
     return;
   }
 
-  api.addToHeaderIcons("remote-jobs-icon");
-
-  api.createWidget("remote-jobs-icon", {
-    tagName: "li.header-dropdown-toggle.remote-jobs-button",
-
-    html() {
-      return this.attach("button", {
-        action: "openRemoteJobs",
-        icon: settings.remote_jobs_button_icon,
-        title: settings.remote_jobs_button_text,
-        className: "icon btn-flat",
-      });
+  api.headerIcons.add(
+    "remote-jobs",
+    {
+      icon: settings.remote_jobs_button_icon,
+      id: "remote-jobs-button",
+      className: "remote-jobs-header-button",
+      title: settings.remote_jobs_button_text,
+      action() {
+        showRemoteJobsModal();
+      },
     },
-
-    openRemoteJobs() {
-      this.sendWidgetAction("showRemoteJobsModal");
-    },
-  });
-
-  api.decorateWidget("header-icons:before", (helper) => {
-    return helper.attach("remote-jobs-icon");
-  });
-
-  api.attachWidgetAction("header", "showRemoteJobsModal", function() {
-    showRemoteJobsModal();
-  });
+    { before: "search" }
+  );
 });
 
 function showRemoteJobsModal() {
