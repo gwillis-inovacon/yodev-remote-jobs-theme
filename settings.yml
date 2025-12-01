@@ -1,0 +1,19 @@
+remote_jobs_url:
+  type: string
+  default: "https://remote-jobs.yodev.dev"
+  description: "URL of the remote jobs board"
+
+remote_jobs_button_text:
+  type: string
+  default: "Remote Jobs"
+  description: "Text for the header button"
+
+remote_jobs_button_icon:
+  type: string
+  default: "briefcase"
+  description: "Font Awesome icon name for the button"
+
+remote_jobs_show_in_header:
+  type: bool
+  default: true
+  description: "Show remote jobs button in the header"

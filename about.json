@@ -1,0 +1,8 @@
+{
+  "name": "Remote Jobs Board",
+  "about_url": "https://github.com/gwillis-inovacon/yodev-remote-jobs",
+  "license_url": "https://github.com/gwillis-inovacon/yodev-remote-jobs/blob/main/LICENSE",
+  "component": true,
+  "authors": "yoDEV.dev",
+  "minimum_discourse_version": "2.7.0"
+}
