@@ -16,4 +16,4 @@ remote_jobs_button_icon:
 remote_jobs_show_in_header:
   type: bool
   default: true
-  description: "Show remote jobs button in the header"
+  description: "Show remote jobs link in the sidebar"

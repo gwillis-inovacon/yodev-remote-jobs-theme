@@ -1,22 +1,14 @@
-// Remote Jobs Button in Sidebar
-.remote-jobs-sidebar-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 8px 12px;
-  border-radius: 6px;
-  color: var(--primary-medium);
-  transition: all 0.2s ease;
-
-  .d-icon {
-    font-size: 1.1em;
+// Remote Jobs Sidebar Link
+.remote-jobs-sidebar-link {
+  .sidebar-section-link-suffix {
+    opacity: 0.5;
+    font-size: 0.75em;
   }
+}
 
-  &:hover {
-    background: var(--primary-low);
-    color: var(--primary);
-  }
+.remote-jobs-external-icon {
+  opacity: 0.4;
+  font-size: 0.7em;
 }
 
 // Modal Styles
