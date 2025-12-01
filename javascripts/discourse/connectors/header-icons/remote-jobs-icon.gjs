@@ -1,5 +1,6 @@
 import Component from "@glimmer/component";
 import { action } from "@ember/object";
+import { on } from "@ember/modifier";
 import icon from "discourse/helpers/d-icon";
 
 export default class RemoteJobsIcon extends Component {
