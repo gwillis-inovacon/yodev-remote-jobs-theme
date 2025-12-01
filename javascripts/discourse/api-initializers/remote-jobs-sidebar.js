@@ -48,39 +48,103 @@ function showRemoteJobsModal() {
   });
 }
 
-function injectSidebarLink() {
-  // Don't add if already exists
-  if (document.querySelector(".remote-jobs-injected")) {
-    return;
+function addRemoteJobsLinkToSidebar() {
+  const sidebarContent = document.querySelector("#sidebar-section-content-community");
+  if (!sidebarContent) {
+    return false;
   }
 
-  // Find the first/main sidebar section's link list (Community section)
-  const mainSection = document.querySelector(".sidebar-section-wrapper .sidebar-section-links");
-  if (!mainSection) {
-    return;
+  // Check if button already exists
+  if (document.querySelector(".remote-jobs-sidebar-btn")) {
+    return true;
   }
 
-  // Create our link element
-  const linkItem = document.createElement("li");
-  linkItem.className = "sidebar-section-link-wrapper remote-jobs-injected";
-  linkItem.innerHTML = `
-    <a href="#" class="sidebar-section-link sidebar-row remote-jobs-link" title="${settings.remote_jobs_button_text}">
-      <span class="sidebar-section-link-prefix icon">
-        <svg class="fa d-icon d-icon-${settings.remote_jobs_button_icon} svg-icon svg-string" xmlns="http://www.w3.org/2000/svg"><use href="#${settings.remote_jobs_button_icon}"></use></svg>
-      </span>
-      <span class="sidebar-section-link-content-text">${settings.remote_jobs_button_text}</span>
-    </a>
-  `;
+  console.log("✅ Adding Remote Jobs link to sidebar");
 
-  // Append to the main section's links
-  mainSection.appendChild(linkItem);
+  const listItem = document.createElement("li");
+  listItem.className = "sidebar-section-link-wrapper";
 
-  // Add click handler
-  const link = linkItem.querySelector(".remote-jobs-link");
-  link.addEventListener("click", (e) => {
+  const link = document.createElement("a");
+  link.className = "remote-jobs-sidebar-btn sidebar-section-link sidebar-row";
+  link.href = "#";
+  link.title = settings.remote_jobs_button_text;
+
+  const iconSpan = document.createElement("span");
+  iconSpan.className = "sidebar-section-link-prefix icon";
+  iconSpan.innerHTML = `<svg class="fa d-icon d-icon-${settings.remote_jobs_button_icon} svg-icon prefix-icon svg-string" aria-hidden="true"><use href="#${settings.remote_jobs_button_icon}"></use></svg>`;
+
+  const textSpan = document.createElement("span");
+  textSpan.className = "sidebar-section-link-content-text";
+  textSpan.textContent = settings.remote_jobs_button_text;
+
+  link.appendChild(iconSpan);
+  link.appendChild(textSpan);
+  listItem.appendChild(link);
+
+  link.addEventListener("click", function (e) {
     e.preventDefault();
     showRemoteJobsModal();
   });
+
+  // Add to sidebar
+  sidebarContent.appendChild(listItem);
+  console.log("✅ Remote Jobs link added to sidebar");
+
+  return true;
+}
+
+function initializeWithRetry(maxAttempts = 10, delayMs = 500) {
+  let attempts = 0;
+
+  const tryInitialize = () => {
+    attempts++;
+    console.log(`🔄 Remote Jobs init attempt ${attempts}/${maxAttempts}`);
+
+    addRemoteJobsLinkToSidebar();
+
+    if (attempts < maxAttempts) {
+      setTimeout(tryInitialize, delayMs * attempts);
+    }
+  };
+
+  tryInitialize();
+}
+
+function setupObservers() {
+  // Sidebar observer - re-add link if sidebar content changes
+  const sidebarContent = document.querySelector("#sidebar-section-content-community");
+  if (sidebarContent) {
+    const sidebarObserver = new MutationObserver(() => {
+      addRemoteJobsLinkToSidebar();
+    });
+    sidebarObserver.observe(sidebarContent, {
+      childList: true,
+      subtree: false,
+    });
+  }
+
+  console.log("👁️ Remote Jobs observers active");
+}
+
+function setupRouteChangeListener() {
+  let currentUrl = window.location.href;
+
+  const urlObserver = new MutationObserver(() => {
+    if (window.location.href !== currentUrl) {
+      currentUrl = window.location.href;
+      console.log("🔄 Remote Jobs: URL changed");
+      setTimeout(() => {
+        initializeWithRetry(5, 300);
+      }, 300);
+    }
+  });
+
+  urlObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
+
+  console.log("🔄 Remote Jobs: Route change listener active");
 }
 
 export default apiInitializer("1.8.0", (api) => {
@@ -88,13 +152,13 @@ export default apiInitializer("1.8.0", (api) => {
     return;
   }
 
-  // Inject on page changes
-  api.onPageChange(() => {
-    setTimeout(injectSidebarLink, 100);
-  });
+  // Initialize
+  initializeWithRetry(10, 500);
+  setupObservers();
+  setupRouteChangeListener();
 
-  // Also try on initial load
-  setTimeout(injectSidebarLink, 500);
-  setTimeout(injectSidebarLink, 1000);
-  setTimeout(injectSidebarLink, 2000);
+  // Also hook into page changes
+  api.onPageChange(() => {
+    setTimeout(() => addRemoteJobsLinkToSidebar(), 100);
+  });
 });
