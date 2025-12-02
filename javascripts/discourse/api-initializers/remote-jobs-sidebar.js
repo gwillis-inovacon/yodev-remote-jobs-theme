@@ -49,20 +49,16 @@ function showRemoteJobsModal() {
 }
 
 function addRemoteJobsButton() {
-  // Remove any duplicates first
-  const allRemoteJobsBtns = document.querySelectorAll('.remote-jobs-sidebar-btn, .remote-jobs-mobile-btn');
-  if (allRemoteJobsBtns.length > 1) {
-    // Keep only the first one, remove the rest
-    for (let i = 1; i < allRemoteJobsBtns.length; i++) {
-      const wrapper = allRemoteJobsBtns[i].closest('.sidebar-section-link-wrapper');
-      if (wrapper) wrapper.remove();
-      else allRemoteJobsBtns[i].remove();
-    }
-  }
+  // Aggressive cleanup - remove ALL existing remote jobs buttons first
+  document.querySelectorAll('.remote-jobs-sidebar-btn, .remote-jobs-mobile-btn').forEach(btn => {
+    const wrapper = btn.closest('.sidebar-section-link-wrapper');
+    if (wrapper) wrapper.remove();
+    else btn.remove();
+  });
 
   // Desktop sidebar
   const sidebarContent = document.querySelector('#sidebar-section-content-community');
-  if (sidebarContent && !sidebarContent.querySelector('.remote-jobs-sidebar-btn')) {
+  if (sidebarContent) {
     console.log('Remote Jobs: Adding button to desktop sidebar');
 
     const listItem = document.createElement('li');
