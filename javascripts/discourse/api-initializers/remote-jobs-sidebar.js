@@ -49,22 +49,69 @@ function showRemoteJobsModal() {
 }
 
 function addRemoteJobsButton() {
-  // Aggressive cleanup - remove ALL existing remote jobs buttons first
-  document.querySelectorAll('.remote-jobs-sidebar-btn, .remote-jobs-mobile-btn').forEach(btn => {
-    const wrapper = btn.closest('.sidebar-section-link-wrapper');
-    if (wrapper) wrapper.remove();
-    else btn.remove();
-  });
-
-  // Desktop sidebar
+  // Desktop sidebar - use data attribute to track
   const sidebarContent = document.querySelector('#sidebar-section-content-community');
   if (sidebarContent) {
-    console.log('Remote Jobs: Adding button to desktop sidebar');
+    // Remove any existing buttons first (cleanup duplicates)
+    sidebarContent.querySelectorAll('.remote-jobs-sidebar-btn').forEach(btn => {
+      const wrapper = btn.closest('.sidebar-section-link-wrapper');
+      if (wrapper) wrapper.remove();
+    });
 
-    const listItem = document.createElement('li');
-    listItem.className = 'sidebar-section-link-wrapper';
-    listItem.innerHTML = `
-      <a class="remote-jobs-sidebar-btn sidebar-section-link sidebar-row" href="#" title="${settings.remote_jobs_button_text}">
+    // Only add if not already marked
+    if (!sidebarContent.hasAttribute('data-remote-jobs-added')) {
+      console.log('Remote Jobs: Adding button to desktop sidebar');
+      sidebarContent.setAttribute('data-remote-jobs-added', 'true');
+
+      const listItem = document.createElement('li');
+      listItem.className = 'sidebar-section-link-wrapper remote-jobs-wrapper';
+      listItem.innerHTML = `
+        <a class="remote-jobs-sidebar-btn sidebar-section-link sidebar-row" href="#" title="${settings.remote_jobs_button_text}">
+          <span class="sidebar-section-link-prefix icon">
+            <svg class="fa d-icon d-icon-${settings.remote_jobs_button_icon} svg-icon prefix-icon svg-string" aria-hidden="true"><use href="#${settings.remote_jobs_button_icon}"></use></svg>
+          </span>
+          <span class="sidebar-section-link-content-text">${settings.remote_jobs_button_text}</span>
+        </a>
+      `;
+
+      listItem.querySelector('.remote-jobs-sidebar-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        showRemoteJobsModal();
+      });
+
+      // Insert after InovaJobs button if it exists
+      const inovaJobsBtn = sidebarContent.querySelector('.inovajobs-sidebar-btn');
+      if (inovaJobsBtn && inovaJobsBtn.closest('.sidebar-section-link-wrapper')) {
+        inovaJobsBtn.closest('.sidebar-section-link-wrapper').insertAdjacentElement('afterend', listItem);
+      } else {
+        sidebarContent.appendChild(listItem);
+      }
+    }
+  }
+
+  // Mobile menu
+  const addToMobile = () => {
+    // Skip if any mobile button already exists
+    if (document.querySelector('.remote-jobs-mobile-btn')) return;
+
+    const menuPanel = document.querySelector('.menu-panel');
+    if (!menuPanel) return;
+
+    // Clean up any stray buttons
+    menuPanel.querySelectorAll('.remote-jobs-mobile-btn').forEach(btn => {
+      const wrapper = btn.closest('.sidebar-section-link-wrapper, li');
+      if (wrapper) wrapper.remove();
+    });
+
+    const container = menuPanel.querySelector('.panel-body ul, .panel-body');
+    if (!container) return;
+
+    console.log('Remote Jobs: Adding mobile button');
+
+    const item = document.createElement('li');
+    item.className = 'sidebar-section-link-wrapper';
+    item.innerHTML = `
+      <a class="remote-jobs-mobile-btn sidebar-section-link sidebar-row" href="#" title="${settings.remote_jobs_button_text}">
         <span class="sidebar-section-link-prefix icon">
           <svg class="fa d-icon d-icon-${settings.remote_jobs_button_icon} svg-icon prefix-icon svg-string" aria-hidden="true"><use href="#${settings.remote_jobs_button_icon}"></use></svg>
         </span>
@@ -72,89 +119,31 @@ function addRemoteJobsButton() {
       </a>
     `;
 
-    const button = listItem.querySelector('.remote-jobs-sidebar-btn');
-    button.addEventListener('click', (e) => {
+    item.querySelector('.remote-jobs-mobile-btn').addEventListener('click', (e) => {
       e.preventDefault();
       showRemoteJobsModal();
     });
 
-    // Insert after InovaJobs button if it exists
-    const inovaJobsBtn = sidebarContent.querySelector('.inovajobs-sidebar-btn');
-    if (inovaJobsBtn && inovaJobsBtn.closest('.sidebar-section-link-wrapper')) {
-      inovaJobsBtn.closest('.sidebar-section-link-wrapper').insertAdjacentElement('afterend', listItem);
-      console.log('Remote Jobs: Inserted after InovaJobs');
-    } else {
-      sidebarContent.appendChild(listItem);
-      console.log('Remote Jobs: Added to end of sidebar');
-    }
-  }
-
-  // Mobile menu - target mobile scrollable content specifically
-  const tryAddToMobileMenu = () => {
-    const mobileSelectors = [
-      '.menu-panel .panel-body',
-      '.revamped.menu-panel .panel-body',
-      '.menu-panel .menu-links-container',
-      '.menu-panel [class*="content"]',
-      '.menu-panel ul'
-    ];
-
-    for (const selector of mobileSelectors) {
-      const container = document.querySelector(selector);
-      if (container) {
-        // Check if button already exists in this container
-        if (container.querySelector('.remote-jobs-mobile-btn')) return true;
-
-        console.log(`Remote Jobs: Found mobile container: ${selector}`);
-
-        const item = document.createElement('li');
-        item.className = 'sidebar-section-link-wrapper';
-        item.innerHTML = `
-          <a class="remote-jobs-mobile-btn sidebar-section-link sidebar-row" href="#" title="${settings.remote_jobs_button_text}">
-            <span class="sidebar-section-link-prefix icon">
-              <svg class="fa d-icon d-icon-${settings.remote_jobs_button_icon} svg-icon prefix-icon svg-string" aria-hidden="true"><use href="#${settings.remote_jobs_button_icon}"></use></svg>
-            </span>
-            <span class="sidebar-section-link-content-text">${settings.remote_jobs_button_text}</span>
-          </a>
-        `;
-
-        item.querySelector('.remote-jobs-mobile-btn').addEventListener('click', (e) => {
-          e.preventDefault();
-          showRemoteJobsModal();
-        });
-
-        // Try to insert after InovaJobs mobile button
-        const inovaMobileBtn = container.querySelector('.inovajobs-universal-btn');
-        if (inovaMobileBtn && inovaMobileBtn.closest('li')) {
-          inovaMobileBtn.closest('li').insertAdjacentElement('afterend', item);
-        } else if (container.tagName === 'UL') {
-          // Find InovaJobs and insert after, or prepend
-          const inovaItem = container.querySelector('.inovajobs-sidebar-btn, .inovajobs-universal-btn');
-          if (inovaItem && inovaItem.closest('li')) {
-            inovaItem.closest('li').insertAdjacentElement('afterend', item);
-          } else {
-            container.prepend(item);
-          }
-        } else {
-          const ul = container.querySelector('ul') || container;
-          if (ul.tagName === 'UL') {
-            ul.prepend(item);
-          } else {
-            container.insertBefore(item, container.firstChild);
-          }
-        }
-
-        console.log('Remote Jobs: Mobile button added');
-        return true;
+    // Insert after InovaJobs or at start
+    const inovaBtn = container.querySelector('.inovajobs-universal-btn, .inovajobs-sidebar-btn');
+    if (inovaBtn) {
+      const inovaWrapper = inovaBtn.closest('li');
+      if (inovaWrapper) {
+        inovaWrapper.insertAdjacentElement('afterend', item);
+        return;
       }
     }
-    return false;
+
+    if (container.tagName === 'UL') {
+      container.prepend(item);
+    } else {
+      const ul = container.querySelector('ul');
+      if (ul) ul.prepend(item);
+    }
   };
 
-  // Try multiple times as mobile menu loads dynamically
-  tryAddToMobileMenu();
-  setTimeout(tryAddToMobileMenu, 500);
-  setTimeout(tryAddToMobileMenu, 1000);
+  addToMobile();
+  setTimeout(addToMobile, 500);
 }
 
 export default apiInitializer("1.8.0", (api) => {
