@@ -105,17 +105,11 @@ function addRemoteJobsButton() {
 
   // Mobile menu
   const addToMobile = () => {
-    // Skip if any mobile button already exists
-    if (document.querySelector('.remote-jobs-mobile-btn')) return;
-
     const menuPanel = document.querySelector('.menu-panel');
     if (!menuPanel) return;
 
-    // Clean up any stray buttons
-    menuPanel.querySelectorAll('.remote-jobs-mobile-btn').forEach(btn => {
-      const wrapper = btn.closest('.sidebar-section-link-wrapper, li');
-      if (wrapper) wrapper.remove();
-    });
+    // Check if button already exists IN THIS menu panel
+    if (menuPanel.querySelector('.remote-jobs-mobile-btn')) return;
 
     const container = menuPanel.querySelector('.panel-body ul, .panel-body');
     if (!container) return;
@@ -123,7 +117,7 @@ function addRemoteJobsButton() {
     console.log('Remote Jobs: Adding mobile button');
 
     const item = document.createElement('li');
-    item.className = 'sidebar-section-link-wrapper';
+    item.className = 'sidebar-section-link-wrapper remote-jobs-mobile-wrapper';
     item.innerHTML = `
       <a class="remote-jobs-mobile-btn sidebar-section-link sidebar-row" href="#" title="${settings.remote_jobs_button_text}">
         <span class="sidebar-section-link-prefix icon">
