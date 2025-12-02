@@ -48,35 +48,59 @@ function showRemoteJobsModal() {
   });
 }
 
-function addRemoteJobsButton() {
-  // Desktop sidebar
+function addDesktopButton() {
   const sidebarContent = document.querySelector('#sidebar-section-content-community');
-  if (sidebarContent && !sidebarContent.querySelector('.remote-jobs-sidebar-btn')) {
-    console.log('Remote Jobs: Adding button to desktop sidebar');
+  if (!sidebarContent) return false;
 
-    const listItem = document.createElement('li');
-    listItem.className = 'sidebar-section-link-wrapper remote-jobs-wrapper';
-    listItem.innerHTML = `
-      <a class="remote-jobs-sidebar-btn sidebar-section-link sidebar-row" href="#" title="${settings.remote_jobs_button_text}">
-        <span class="sidebar-section-link-prefix icon">
-          <svg class="fa d-icon d-icon-${settings.remote_jobs_button_icon} svg-icon prefix-icon svg-string" aria-hidden="true"><use href="#${settings.remote_jobs_button_icon}"></use></svg>
-        </span>
-        <span class="sidebar-section-link-content-text">${settings.remote_jobs_button_text}</span>
-      </a>
-    `;
+  // Already exists in main sidebar
+  if (document.querySelector('.sidebar-sections .remote-jobs-sidebar-btn')) return true;
 
-    listItem.querySelector('.remote-jobs-sidebar-btn').addEventListener('click', (e) => {
-      e.preventDefault();
-      showRemoteJobsModal();
-    });
+  // Find InovaJobs button - only in the main visible section, not in "more..." dropdown
+  // The main section links are direct children of #sidebar-section-content-community
+  const inovaJobsBtn = sidebarContent.querySelector(':scope > .sidebar-section-link-wrapper .inovajobs-sidebar-btn');
+  if (!inovaJobsBtn) return false; // Will retry
 
-    // Insert after InovaJobs button if it exists
-    const inovaJobsBtn = sidebarContent.querySelector('.inovajobs-sidebar-btn');
-    if (inovaJobsBtn && inovaJobsBtn.closest('.sidebar-section-link-wrapper')) {
-      inovaJobsBtn.closest('.sidebar-section-link-wrapper').insertAdjacentElement('afterend', listItem);
+  console.log('Remote Jobs: Adding button to desktop sidebar after InovaJobs');
+
+  const listItem = document.createElement('li');
+  listItem.className = 'sidebar-section-link-wrapper remote-jobs-wrapper';
+  listItem.innerHTML = `
+    <a class="remote-jobs-sidebar-btn sidebar-section-link sidebar-row" href="#" title="${settings.remote_jobs_button_text}">
+      <span class="sidebar-section-link-prefix icon">
+        <svg class="fa d-icon d-icon-${settings.remote_jobs_button_icon} svg-icon prefix-icon svg-string" aria-hidden="true"><use href="#${settings.remote_jobs_button_icon}"></use></svg>
+      </span>
+      <span class="sidebar-section-link-content-text">${settings.remote_jobs_button_text}</span>
+    </a>
+  `;
+
+  listItem.querySelector('.remote-jobs-sidebar-btn').addEventListener('click', (e) => {
+    e.preventDefault();
+    showRemoteJobsModal();
+  });
+
+  // Insert after InovaJobs button's wrapper
+  const inovaWrapper = inovaJobsBtn.closest('.sidebar-section-link-wrapper');
+  if (inovaWrapper && inovaWrapper.parentElement === sidebarContent) {
+    inovaWrapper.insertAdjacentElement('afterend', listItem);
+  } else {
+    // Fallback: insert as second child (after first item)
+    const firstItem = sidebarContent.querySelector(':scope > .sidebar-section-link-wrapper');
+    if (firstItem) {
+      firstItem.insertAdjacentElement('afterend', listItem);
     } else {
-      sidebarContent.appendChild(listItem);
+      sidebarContent.prepend(listItem);
     }
+  }
+
+  return true;
+}
+
+function addRemoteJobsButton() {
+  // Desktop sidebar - retry until InovaJobs button appears
+  if (!addDesktopButton()) {
+    setTimeout(addDesktopButton, 500);
+    setTimeout(addDesktopButton, 1000);
+    setTimeout(addDesktopButton, 2000);
   }
 
   // Mobile menu
