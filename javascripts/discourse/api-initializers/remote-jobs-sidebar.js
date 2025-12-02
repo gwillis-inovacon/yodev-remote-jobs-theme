@@ -90,8 +90,12 @@ function addMobileButton() {
   // Global check - don't add if any button exists
   if (document.querySelector('.remote-jobs-btn')) return;
 
-  const menuPanel = document.querySelector('.menu-panel');
+  // Only target hamburger/sidebar menu, NOT user menu
+  const menuPanel = document.querySelector('.hamburger-panel .menu-panel, .sidebar-hamburger-dropdown');
   if (!menuPanel) return;
+
+  // Skip if this is the user menu (has user-related content)
+  if (menuPanel.querySelector('.quick-access-panel, .user-menu, [class*="user-menu"]')) return;
 
   const container = menuPanel.querySelector('.panel-body ul, .panel-body');
   if (!container) return;
