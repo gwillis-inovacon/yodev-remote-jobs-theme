@@ -49,43 +49,33 @@ function showRemoteJobsModal() {
 }
 
 function addRemoteJobsButton() {
-  // Desktop sidebar - use data attribute to track
+  // Desktop sidebar
   const sidebarContent = document.querySelector('#sidebar-section-content-community');
-  if (sidebarContent) {
-    // Remove any existing buttons first (cleanup duplicates)
-    sidebarContent.querySelectorAll('.remote-jobs-sidebar-btn').forEach(btn => {
-      const wrapper = btn.closest('.sidebar-section-link-wrapper');
-      if (wrapper) wrapper.remove();
+  if (sidebarContent && !sidebarContent.querySelector('.remote-jobs-sidebar-btn')) {
+    console.log('Remote Jobs: Adding button to desktop sidebar');
+
+    const listItem = document.createElement('li');
+    listItem.className = 'sidebar-section-link-wrapper remote-jobs-wrapper';
+    listItem.innerHTML = `
+      <a class="remote-jobs-sidebar-btn sidebar-section-link sidebar-row" href="#" title="${settings.remote_jobs_button_text}">
+        <span class="sidebar-section-link-prefix icon">
+          <svg class="fa d-icon d-icon-${settings.remote_jobs_button_icon} svg-icon prefix-icon svg-string" aria-hidden="true"><use href="#${settings.remote_jobs_button_icon}"></use></svg>
+        </span>
+        <span class="sidebar-section-link-content-text">${settings.remote_jobs_button_text}</span>
+      </a>
+    `;
+
+    listItem.querySelector('.remote-jobs-sidebar-btn').addEventListener('click', (e) => {
+      e.preventDefault();
+      showRemoteJobsModal();
     });
 
-    // Only add if not already marked
-    if (!sidebarContent.hasAttribute('data-remote-jobs-added')) {
-      console.log('Remote Jobs: Adding button to desktop sidebar');
-      sidebarContent.setAttribute('data-remote-jobs-added', 'true');
-
-      const listItem = document.createElement('li');
-      listItem.className = 'sidebar-section-link-wrapper remote-jobs-wrapper';
-      listItem.innerHTML = `
-        <a class="remote-jobs-sidebar-btn sidebar-section-link sidebar-row" href="#" title="${settings.remote_jobs_button_text}">
-          <span class="sidebar-section-link-prefix icon">
-            <svg class="fa d-icon d-icon-${settings.remote_jobs_button_icon} svg-icon prefix-icon svg-string" aria-hidden="true"><use href="#${settings.remote_jobs_button_icon}"></use></svg>
-          </span>
-          <span class="sidebar-section-link-content-text">${settings.remote_jobs_button_text}</span>
-        </a>
-      `;
-
-      listItem.querySelector('.remote-jobs-sidebar-btn').addEventListener('click', (e) => {
-        e.preventDefault();
-        showRemoteJobsModal();
-      });
-
-      // Insert after InovaJobs button if it exists
-      const inovaJobsBtn = sidebarContent.querySelector('.inovajobs-sidebar-btn');
-      if (inovaJobsBtn && inovaJobsBtn.closest('.sidebar-section-link-wrapper')) {
-        inovaJobsBtn.closest('.sidebar-section-link-wrapper').insertAdjacentElement('afterend', listItem);
-      } else {
-        sidebarContent.appendChild(listItem);
-      }
+    // Insert after InovaJobs button if it exists
+    const inovaJobsBtn = sidebarContent.querySelector('.inovajobs-sidebar-btn');
+    if (inovaJobsBtn && inovaJobsBtn.closest('.sidebar-section-link-wrapper')) {
+      inovaJobsBtn.closest('.sidebar-section-link-wrapper').insertAdjacentElement('afterend', listItem);
+    } else {
+      sidebarContent.appendChild(listItem);
     }
   }
 
