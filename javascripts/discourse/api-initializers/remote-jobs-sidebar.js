@@ -1,5 +1,80 @@
 import { apiInitializer } from "discourse/lib/api";
 
+// Store the API reference for use in message handlers
+let discourseApi = null;
+
+/**
+ * Handle messages from the iframe (job alerts app)
+ */
+function handleIframeMessage(event) {
+  // Verify origin matches our jobs board URL
+  const jobsUrl = settings.remote_jobs_url || "";
+  if (!jobsUrl) return;
+
+  try {
+    const allowedHost = new URL(jobsUrl).host;
+    if (!event.origin.includes(allowedHost)) {
+      return;
+    }
+  } catch (e) {
+    return;
+  }
+
+  if (event.data.type === "request_user_data") {
+    sendUserDataToIframe();
+  }
+}
+
+/**
+ * Send current user data to the iframe
+ */
+function sendUserDataToIframe() {
+  const iframe = document.querySelector("#remote-jobs-modal iframe");
+  if (!iframe) return;
+
+  const currentUser = discourseApi?.getCurrentUser();
+
+  if (currentUser) {
+    const userData = {
+      discourse_user_id: currentUser.id,
+      username: currentUser.username,
+      name: currentUser.name,
+      email: currentUser.email,
+      avatar_url: currentUser.avatar_template?.replace("{size}", "120"),
+      is_admin: currentUser.admin,
+      trust_level: currentUser.trust_level
+    };
+
+    // Create a simple token (backend will validate/re-sign)
+    const token = generateUserToken(userData);
+
+    iframe.contentWindow.postMessage({
+      type: "discourse_user",
+      user: userData,
+      token: token
+    }, settings.remote_jobs_url);
+  } else {
+    // User not logged in
+    iframe.contentWindow.postMessage({
+      type: "discourse_user",
+      user: null,
+      token: null
+    }, settings.remote_jobs_url);
+  }
+}
+
+/**
+ * Generate a user token for iframe authentication
+ */
+function generateUserToken(userData) {
+  const payload = {
+    ...userData,
+    exp: Date.now() + (5 * 60 * 1000), // 5 minute expiry
+    iat: Date.now()
+  };
+  return btoa(JSON.stringify(payload));
+}
+
 function showRemoteJobsModal() {
   const existingModal = document.getElementById("remote-jobs-modal");
   if (existingModal) {
@@ -149,11 +224,16 @@ function addRemoteJobsButton() {
 }
 
 export default apiInitializer("1.8.0", (api) => {
+  discourseApi = api;
+
   if (!settings.remote_jobs_show_in_header) {
     return;
   }
 
   console.log('Remote Jobs: Initializing');
+
+  // Listen for messages from the iframe
+  window.addEventListener("message", handleIframeMessage);
 
   // Add button on page changes
   api.onPageChange(() => {
