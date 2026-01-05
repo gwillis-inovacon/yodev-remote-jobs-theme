@@ -399,10 +399,39 @@ function showYoDevLoginModal(config) {
 
   overlay.querySelector('#yodev-signin-btn').addEventListener('click', () => {
     closeModal();
-    if (window.Discourse && window.Discourse.__container__) {
-      const route = window.Discourse.__container__.lookup('route:application');
-      if (route) { route.send('showLogin'); return; }
+
+    // Also close the remote jobs iframe modal if open
+    const remoteJobsModal = document.getElementById('remote-jobs-modal');
+    if (remoteJobsModal) remoteJobsModal.remove();
+
+    // Try multiple methods to trigger Discourse login
+    try {
+      // Method 1: Use the application route
+      if (window.Discourse && window.Discourse.__container__) {
+        const router = window.Discourse.__container__.lookup('router:main');
+        if (router) {
+          router.transitionTo('login');
+          return;
+        }
+
+        const route = window.Discourse.__container__.lookup('route:application');
+        if (route && route.send) {
+          route.send('showLogin');
+          return;
+        }
+
+        // Method 2: Use controller
+        const controller = window.Discourse.__container__.lookup('controller:application');
+        if (controller && controller.send) {
+          controller.send('showLogin');
+          return;
+        }
+      }
+    } catch (e) {
+      console.error('Failed to trigger Discourse login:', e);
     }
+
+    // Fallback: navigate to login page
     window.location.href = '/login';
   });
 }
