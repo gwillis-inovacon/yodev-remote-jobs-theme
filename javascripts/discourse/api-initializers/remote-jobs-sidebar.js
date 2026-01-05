@@ -38,7 +38,11 @@ function injectYoDevLoginStyles() {
       display: flex;
       align-items: center;
       justify-content: center;
-      animation: yodev-fade-in 0.2s ease-out backwards;
+      opacity: 0;
+    }
+
+    .yodev-login-overlay.is-visible {
+      animation: yodev-fade-in 0.2s ease-out forwards;
     }
 
     @keyframes yodev-fade-in {
@@ -66,8 +70,13 @@ function injectYoDevLoginStyles() {
       max-height: 90vh;
       overflow-y: auto;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-      animation: yodev-slide-up 0.3s ease-out backwards;
       position: relative;
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+    }
+
+    .yodev-login-overlay.is-visible .yodev-login-modal {
+      animation: yodev-slide-up 0.3s ease-out forwards;
     }
 
     .yodev-login-close {
@@ -388,6 +397,13 @@ function showYoDevLoginModal(config) {
   `;
 
   document.body.appendChild(overlay);
+
+  // Trigger animation after element is in DOM
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      overlay.classList.add('is-visible');
+    });
+  });
 
   const closeModal = () => overlay.remove();
 
