@@ -4,7 +4,7 @@ import { apiInitializer } from "discourse/lib/api";
 let discourseApi = null;
 
 // ============================================
-// YODEV LOGIN MODAL & TOAST (Remote Jobs specific)
+// YODEV LOGIN MODAL & TOAST
 // ============================================
 
 const REMOTE_JOBS_CONFIG = {
@@ -242,7 +242,7 @@ function injectYoDevLoginStyles() {
     }
 
     /* Toast notification */
-    .yodev-remotejobs-toast {
+    .yodev-toast {
       position: fixed;
       bottom: 24px;
       right: 24px;
@@ -260,31 +260,31 @@ function injectYoDevLoginStyles() {
       max-width: 360px;
     }
 
-    .yodev-remotejobs-toast-icon {
+    .yodev-toast-icon {
       width: 40px;
       height: 40px;
       border-radius: 8px;
       flex-shrink: 0;
     }
 
-    .yodev-remotejobs-toast-content {
+    .yodev-toast-content {
       flex: 1;
     }
 
-    .yodev-remotejobs-toast-title {
+    .yodev-toast-title {
       font-size: 14px;
       font-weight: 600;
       color: #ffffff;
       margin: 0 0 4px 0;
     }
 
-    .yodev-remotejobs-toast-message {
+    .yodev-toast-message {
       font-size: 13px;
       color: #a0a0b0;
       margin: 0;
     }
 
-    .yodev-remotejobs-toast-btn {
+    .yodev-toast-btn {
       padding: 8px 16px;
       border-radius: 6px;
       font-size: 13px;
@@ -298,12 +298,12 @@ function injectYoDevLoginStyles() {
       box-shadow: 0 2px 8px rgba(91, 141, 239, 0.3);
     }
 
-    .yodev-remotejobs-toast-btn:hover {
+    .yodev-toast-btn:hover {
       background: linear-gradient(135deg, #4a7de0 0%, #5b8def 100%);
       transform: translateY(-1px);
     }
 
-    .yodev-remotejobs-toast-close {
+    .yodev-toast-close {
       position: absolute;
       top: 8px;
       right: 8px;
@@ -317,7 +317,7 @@ function injectYoDevLoginStyles() {
       transition: color 0.2s;
     }
 
-    .yodev-remotejobs-toast-close:hover {
+    .yodev-toast-close:hover {
       color: #fff;
     }
   `;
@@ -327,28 +327,27 @@ function injectYoDevLoginStyles() {
 function showYoDevToast(config, onContinue) {
   injectYoDevLoginStyles();
 
-  const existing = document.querySelector('.yodev-remotejobs-toast');
+  const existing = document.querySelector('.yodev-toast');
   if (existing) existing.remove();
 
   const toast = document.createElement('div');
-  toast.className = 'yodev-remotejobs-toast';
-  toast.style.position = 'relative';
+  toast.className = 'yodev-toast';
   toast.innerHTML = `
-    <button class="yodev-remotejobs-toast-close">&times;</button>
-    <img src="${config.appLogo}" alt="${config.appName}" class="yodev-remotejobs-toast-icon" />
-    <div class="yodev-remotejobs-toast-content">
-      <p class="yodev-remotejobs-toast-title">Welcome back!</p>
-      <p class="yodev-remotejobs-toast-message">Click to set up your ${config.appName}</p>
+    <button class="yodev-toast-close">&times;</button>
+    <img src="${config.appLogo}" alt="${config.appName}" class="yodev-toast-icon" />
+    <div class="yodev-toast-content">
+      <p class="yodev-toast-title">Welcome back!</p>
+      <p class="yodev-toast-message">Click to set up your ${config.appName}</p>
     </div>
-    <button class="yodev-remotejobs-toast-btn">Set Preferences</button>
+    <button class="yodev-toast-btn">Set Preferences</button>
   `;
 
   document.body.appendChild(toast);
 
   const closeToast = () => toast.remove();
 
-  toast.querySelector('.yodev-remotejobs-toast-close').addEventListener('click', closeToast);
-  toast.querySelector('.yodev-remotejobs-toast-btn').addEventListener('click', () => {
+  toast.querySelector('.yodev-toast-close').addEventListener('click', closeToast);
+  toast.querySelector('.yodev-toast-btn').addEventListener('click', () => {
     closeToast();
     if (onContinue) onContinue();
   });
@@ -356,20 +355,11 @@ function showYoDevToast(config, onContinue) {
   setTimeout(closeToast, 30000);
 }
 
-// Store escape handler reference for cleanup
-let currentEscHandler = null;
-
 function showYoDevLoginModal(config) {
   injectYoDevLoginStyles();
 
   const existing = document.querySelector('.yodev-remotejobs-overlay');
   if (existing) existing.remove();
-
-  // Clean up any existing escape handler
-  if (currentEscHandler) {
-    document.removeEventListener('keydown', currentEscHandler);
-    currentEscHandler = null;
-  }
 
   const featuresHtml = config.appFeatures.map(f =>
     `<div class="yodev-remotejobs-feature"><i class="fa fa-${f.icon}"></i><span>${f.text}</span></div>`
@@ -387,7 +377,7 @@ function showYoDevLoginModal(config) {
         <div class="yodev-remotejobs-features">${featuresHtml}</div>
         <div class="yodev-remotejobs-member-section">
           <p class="yodev-remotejobs-member-title">Already a yoDEV member?</p>
-          <button class="yodev-remotejobs-btn yodev-remotejobs-btn-primary" id="yodev-remotejobs-signin-btn">
+          <button class="yodev-remotejobs-btn yodev-remotejobs-btn-primary" id="yodev-signin-btn">
             <i class="fa fa-sign-in"></i> Sign In with yoDEV
           </button>
         </div>
@@ -400,7 +390,7 @@ function showYoDevLoginModal(config) {
           <p class="yodev-remotejobs-register-text">
             Not a yoDEV member yet? Registration takes just a minute and gives you access to ${config.appName} and other community features.
           </p>
-          <a href="#" class="yodev-remotejobs-register-link" id="yodev-remotejobs-register-link">Register at yoDEV.dev &rarr;</a>
+          <a href="${config.registerUrl}" target="_blank" class="yodev-remotejobs-register-link">Register at yoDEV.dev &rarr;</a>
         </div>
       </div>
     </div>
@@ -415,41 +405,24 @@ function showYoDevLoginModal(config) {
     });
   });
 
-  const closeModal = () => {
-    overlay.remove();
-    // Clean up escape handler
-    if (currentEscHandler) {
-      document.removeEventListener('keydown', currentEscHandler);
-      currentEscHandler = null;
-    }
-  };
+  const closeModal = () => overlay.remove();
 
   overlay.querySelector('.yodev-remotejobs-close').addEventListener('click', closeModal);
   overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', function escHandler(e) {
+    if (e.key === 'Escape') { closeModal(); document.removeEventListener('keydown', escHandler); }
+  });
 
-  // Create and store escape handler
-  currentEscHandler = (e) => {
-    if (e.key === 'Escape') {
-      closeModal();
-    }
-  };
-  document.addEventListener('keydown', currentEscHandler);
-
-  overlay.querySelector('#yodev-remotejobs-signin-btn').addEventListener('click', () => {
+  overlay.querySelector('#yodev-signin-btn').addEventListener('click', () => {
     closeModal();
 
     // Also close the remote jobs iframe modal if open
     const remoteJobsModal = document.getElementById('remote-jobs-modal');
     if (remoteJobsModal) remoteJobsModal.remove();
 
-    // Store pending action
-    localStorage.setItem('yodev_pending_app', JSON.stringify({
-      appId: 'jobalerts',
-      timestamp: Date.now()
-    }));
-
     // Try multiple methods to trigger Discourse login
     try {
+      // Method 1: Use the application route
       if (window.Discourse && window.Discourse.__container__) {
         const router = window.Discourse.__container__.lookup('router:main');
         if (router) {
@@ -463,6 +436,7 @@ function showYoDevLoginModal(config) {
           return;
         }
 
+        // Method 2: Use controller
         const controller = window.Discourse.__container__.lookup('controller:application');
         if (controller && controller.send) {
           controller.send('showLogin');
@@ -476,69 +450,26 @@ function showYoDevLoginModal(config) {
     // Fallback: navigate to login page
     window.location.href = '/login';
   });
-
-  overlay.querySelector('#yodev-remotejobs-register-link').addEventListener('click', (e) => {
-    e.preventDefault();
-    closeModal();
-
-    // Store pending action
-    localStorage.setItem('yodev_pending_app', JSON.stringify({
-      appId: 'jobalerts',
-      timestamp: Date.now()
-    }));
-
-    // Try to trigger Discourse signup
-    try {
-      if (window.Discourse && window.Discourse.__container__) {
-        const router = window.Discourse.__container__.lookup('router:main');
-        if (router) {
-          router.transitionTo('signup');
-          return;
-        }
-
-        const route = window.Discourse.__container__.lookup('route:application');
-        if (route && route.send) {
-          route.send('showCreateAccount');
-          return;
-        }
-
-        const controller = window.Discourse.__container__.lookup('controller:application');
-        if (controller && controller.send) {
-          controller.send('showCreateAccount');
-          return;
-        }
-      }
-    } catch (e) {
-      console.error('Failed to trigger Discourse signup:', e);
-    }
-
-    // Fallback
-    window.location.href = '/signup';
-  });
 }
 
-let pendingActionHandled = false;
-
 function checkPendingAppAction() {
-  if (pendingActionHandled) return;
-
-  const pending = localStorage.getItem('yodev_pending_app');
+  const pending = sessionStorage.getItem('yodev_pending_app');
   if (!pending) return;
 
   try {
     const { appId, timestamp } = JSON.parse(pending);
 
     if (Date.now() - timestamp > 300000) {
-      localStorage.removeItem('yodev_pending_app');
+      sessionStorage.removeItem('yodev_pending_app');
       return;
     }
 
     const currentUser = discourseApi?.getCurrentUser();
     if (!currentUser) return;
 
+    sessionStorage.removeItem('yodev_pending_app');
+
     if (appId === 'jobalerts') {
-      pendingActionHandled = true;
-      localStorage.removeItem('yodev_pending_app');
       // Show toast, then reopen modal and notify iframe user is now logged in
       showYoDevToast(REMOTE_JOBS_CONFIG, () => {
         showRemoteJobsModal();
@@ -547,7 +478,7 @@ function checkPendingAppAction() {
       });
     }
   } catch (e) {
-    localStorage.removeItem('yodev_pending_app');
+    sessionStorage.removeItem('yodev_pending_app');
   }
 }
 
@@ -587,7 +518,7 @@ function handleIframeMessage(event) {
       if (remoteJobsModal) remoteJobsModal.remove();
 
       // Store pending action so we can resume after login
-      localStorage.setItem('yodev_pending_app', JSON.stringify({
+      sessionStorage.setItem('yodev_pending_app', JSON.stringify({
         appId: 'jobalerts',
         timestamp: Date.now()
       }));
@@ -666,206 +597,204 @@ function showRemoteJobsModal() {
   modal.innerHTML = `
     <div class="remote-jobs-modal-backdrop"></div>
     <div class="remote-jobs-modal-container">
-      <button class="remote-jobs-modal-close">&times;</button>
-      <iframe
-        src="${settings.remote_jobs_url}"
-        frameborder="0"
-        allow="clipboard-write"
-      ></iframe>
+      <div class="remote-jobs-modal-header">
+        <h2>${settings.remote_jobs_button_text}</h2>
+        <button class="remote-jobs-modal-close" aria-label="Close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="remote-jobs-modal-content">
+        <iframe src="${settings.remote_jobs_url}" frameborder="0" allowfullscreen></iframe>
+      </div>
     </div>
   `;
 
   document.body.appendChild(modal);
 
-  // Close on backdrop click
-  modal.querySelector(".remote-jobs-modal-backdrop").addEventListener("click", () => {
-    modal.remove();
-  });
+  const backdrop = modal.querySelector(".remote-jobs-modal-backdrop");
+  const closeBtn = modal.querySelector(".remote-jobs-modal-close");
 
-  // Close on X button click
-  modal.querySelector(".remote-jobs-modal-close").addEventListener("click", () => {
-    modal.remove();
-  });
+  backdrop.addEventListener("click", () => modal.remove());
+  closeBtn.addEventListener("click", () => modal.remove());
 
-  // Close on Escape key
-  const escHandler = (e) => {
+  const handleEscape = (e) => {
     if (e.key === "Escape") {
       modal.remove();
-      document.removeEventListener("keydown", escHandler);
+      document.removeEventListener("keydown", handleEscape);
     }
   };
-  document.addEventListener("keydown", escHandler);
+  document.addEventListener("keydown", handleEscape);
 
-  // Send user data when iframe loads
-  const iframe = modal.querySelector("iframe");
-  iframe.addEventListener("load", () => {
-    setTimeout(() => sendUserDataToIframe(), 100);
+  requestAnimationFrame(() => {
+    modal.classList.add("is-visible");
   });
 }
 
 // ============================================
-// SIDEBAR BUTTON
+// SIDEBAR BUTTONS
 // ============================================
 
-function addRemoteJobsSidebarButton(api) {
-  const existingButton = document.querySelector('.remote-jobs-sidebar-btn');
-  const sidebarContent = document.querySelector('#sidebar-section-content-community');
+function addDesktopButton() {
+  // Already exists
+  if (document.querySelector('.sidebar-sections .remote-jobs-btn')) return true;
 
+  const sidebarContent = document.querySelector('#sidebar-section-content-community');
   if (!sidebarContent) return false;
 
-  if (existingButton) return true;
+  // Wait for InovaJobs button
+  const inovaJobsBtn = sidebarContent.querySelector(':scope > .sidebar-section-link-wrapper .inovajobs-sidebar-btn');
+  if (!inovaJobsBtn) return false; // Will retry
 
-  // Find InovaJobs button to position after it
-  const inovaJobsButton = sidebarContent.querySelector('a[href*="inovajobs"], .inovajobs-sidebar-btn');
+  console.log('Remote Jobs: Adding button to desktop sidebar after InovaJobs');
 
   const listItem = document.createElement('li');
-  listItem.className = 'sidebar-section-link-wrapper';
+  listItem.className = 'sidebar-section-link-wrapper remote-jobs-wrapper';
+  listItem.innerHTML = `
+    <a class="remote-jobs-btn sidebar-section-link sidebar-row" href="#" title="${settings.remote_jobs_button_text}">
+      <span class="sidebar-section-link-prefix icon">
+        <svg class="fa d-icon d-icon-${settings.remote_jobs_button_icon} svg-icon prefix-icon svg-string" aria-hidden="true"><use href="#${settings.remote_jobs_button_icon}"></use></svg>
+      </span>
+      <span class="sidebar-section-link-content-text">${settings.remote_jobs_button_text}</span>
+    </a>
+  `;
 
-  const link = document.createElement('a');
-  link.className = 'remote-jobs-sidebar-btn sidebar-section-link sidebar-row';
-  link.href = '#';
-  link.title = 'Remote Jobs';
-
-  const iconSpan = document.createElement('span');
-  iconSpan.className = 'sidebar-section-link-prefix icon';
-  iconSpan.innerHTML = '<svg class="fa d-icon d-icon-briefcase svg-icon prefix-icon svg-string" aria-hidden="true"><use href="#briefcase"></use></svg>';
-
-  const textSpan = document.createElement('span');
-  textSpan.className = 'sidebar-section-link-content-text';
-  textSpan.textContent = 'Remote Jobs';
-
-  link.appendChild(iconSpan);
-  link.appendChild(textSpan);
-  listItem.appendChild(link);
-
-  link.addEventListener('click', function(e) {
+  listItem.querySelector('.remote-jobs-btn').addEventListener('click', (e) => {
     e.preventDefault();
-    e.stopPropagation();
     showRemoteJobsModal();
   });
 
-  // Position after InovaJobs if it exists
-  if (inovaJobsButton && inovaJobsButton.closest('li')) {
-    console.log('Remote Jobs: Adding button to desktop sidebar after InovaJobs');
-    inovaJobsButton.closest('li').insertAdjacentElement('afterend', listItem);
-  } else {
-    // Otherwise add at end
-    sidebarContent.appendChild(listItem);
+  const inovaWrapper = inovaJobsBtn.closest('.sidebar-section-link-wrapper');
+  if (inovaWrapper && inovaWrapper.parentElement === sidebarContent) {
+    inovaWrapper.insertAdjacentElement('afterend', listItem);
+    return true;
   }
 
-  return true;
+  return false;
 }
 
-function addRemoteJobsSidebarButtonWithRetry(api, maxAttempts = 10, delayMs = 500) {
-  let attempts = 0;
-  const tryPlacement = () => {
-    attempts++;
-    const success = addRemoteJobsSidebarButton(api);
-    if (!success && attempts < maxAttempts) {
-      setTimeout(tryPlacement, delayMs * attempts);
-    }
-  };
-  tryPlacement();
-}
+function addMobileButton() {
+  // Global check - don't add if any button exists
+  if (document.querySelector('.remote-jobs-btn')) return;
 
-// ============================================
-// STYLES
-// ============================================
+  // Only target hamburger/sidebar menu, NOT user menu
+  const menuPanel = document.querySelector('.hamburger-panel .menu-panel, .sidebar-hamburger-dropdown');
+  if (!menuPanel) return;
 
-function injectStyles() {
-  if (document.getElementById('remote-jobs-styles')) return;
+  // Skip if this is the user menu (has user-related content)
+  if (menuPanel.querySelector('.quick-access-panel, .user-menu, [class*="user-menu"]')) return;
 
-  const styles = document.createElement('style');
-  styles.id = 'remote-jobs-styles';
-  styles.textContent = `
-    .remote-jobs-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+  const container = menuPanel.querySelector('.panel-body ul, .panel-body');
+  if (!container) return;
 
-    .remote-jobs-modal-backdrop {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(4px);
-    }
+  console.log('Remote Jobs: Adding mobile button');
 
-    .remote-jobs-modal-container {
-      position: relative;
-      width: 95%;
-      max-width: 1400px;
-      height: 90%;
-      max-height: 900px;
-      background: #1a1a2e;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    }
-
-    .remote-jobs-modal-close {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      z-index: 10;
-      background: rgba(0, 0, 0, 0.5);
-      border: none;
-      color: white;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      font-size: 24px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s;
-    }
-
-    .remote-jobs-modal-close:hover {
-      background: rgba(0, 0, 0, 0.7);
-    }
-
-    .remote-jobs-modal iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
+  const item = document.createElement('li');
+  item.className = 'sidebar-section-link-wrapper';
+  item.innerHTML = `
+    <a class="remote-jobs-btn sidebar-section-link sidebar-row" href="#" title="${settings.remote_jobs_button_text}">
+      <span class="sidebar-section-link-prefix icon">
+        <svg class="fa d-icon d-icon-${settings.remote_jobs_button_icon} svg-icon prefix-icon svg-string" aria-hidden="true"><use href="#${settings.remote_jobs_button_icon}"></use></svg>
+      </span>
+      <span class="sidebar-section-link-content-text">${settings.remote_jobs_button_text}</span>
+    </a>
   `;
-  document.head.appendChild(styles);
+
+  item.querySelector('.remote-jobs-btn').addEventListener('click', (e) => {
+    e.preventDefault();
+    showRemoteJobsModal();
+  });
+
+  // Insert after InovaJobs or at start
+  const inovaBtn = container.querySelector('.inovajobs-universal-btn, .inovajobs-sidebar-btn');
+  if (inovaBtn) {
+    const inovaWrapper = inovaBtn.closest('li');
+    if (inovaWrapper) {
+      inovaWrapper.insertAdjacentElement('afterend', item);
+      return;
+    }
+  }
+
+  if (container.tagName === 'UL') {
+    container.prepend(item);
+  } else {
+    const ul = container.querySelector('ul');
+    if (ul) ul.prepend(item);
+  }
+}
+
+function addRemoteJobsButton() {
+  // Desktop - retry until InovaJobs loads
+  if (!addDesktopButton()) {
+    setTimeout(addDesktopButton, 500);
+    setTimeout(addDesktopButton, 1000);
+    setTimeout(addDesktopButton, 2000);
+  }
+
+  // Mobile
+  addMobileButton();
 }
 
 // ============================================
-// MAIN EXPORT
+// INITIALIZATION
 // ============================================
 
-export default apiInitializer("1.0", (api) => {
+export default apiInitializer("1.8.0", (api) => {
   discourseApi = api;
 
-  injectStyles();
+  if (!settings.remote_jobs_show_in_header) {
+    return;
+  }
 
-  // Desktop sidebar button
+  console.log('Remote Jobs: Initializing');
+
+  // Listen for messages from the iframe
+  window.addEventListener("message", handleIframeMessage);
+
+  // Add button on page changes
   api.onPageChange(() => {
-    addRemoteJobsSidebarButtonWithRetry(api);
+    setTimeout(() => {
+      addRemoteJobsButton();
+    }, 1000);
   });
 
-  // Check for pending app action (post-login)
-  api.onPageChange(() => {
-    checkPendingAppAction();
+  // Re-add mobile button when hamburger menu is clicked
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.hamburger-panel') || e.target.closest('.btn-sidebar-toggle')) {
+      setTimeout(() => {
+        addRemoteJobsButton();
+      }, 500);
+    }
   });
-  setTimeout(checkPendingAppAction, 1000);
-  setTimeout(checkPendingAppAction, 2000);
-  setTimeout(checkPendingAppAction, 3000);
 
-  // Listen for iframe messages
-  window.addEventListener('message', handleIframeMessage);
+  // MutationObserver for dynamic content (mobile menu appearing)
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.addedNodes.length > 0) {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === 1 &&
+              (node.classList?.contains('menu-panel') ||
+               node.querySelector?.('.menu-panel'))) {
+            setTimeout(() => {
+              addRemoteJobsButton();
+            }, 100);
+          }
+        });
+      }
+    });
+  });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+
+  // Initial load
+  setTimeout(() => addRemoteJobsButton(), 1000);
+
+  // Check for pending app action after login
+  setTimeout(() => checkPendingAppAction(), 1500);
+
+  console.log('Remote Jobs: Initialization complete');
 });
