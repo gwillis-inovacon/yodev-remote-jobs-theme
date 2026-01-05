@@ -38,7 +38,7 @@ function injectYoDevLoginStyles() {
       display: flex;
       align-items: center;
       justify-content: center;
-      animation: yodev-fade-in 0.2s ease-out;
+      animation: yodev-fade-in 0.2s ease-out backwards;
     }
 
     @keyframes yodev-fade-in {
@@ -66,7 +66,7 @@ function injectYoDevLoginStyles() {
       max-height: 90vh;
       overflow-y: auto;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-      animation: yodev-slide-up 0.3s ease-out;
+      animation: yodev-slide-up 0.3s ease-out backwards;
       position: relative;
     }
 
@@ -246,7 +246,7 @@ function injectYoDevLoginStyles() {
       display: flex;
       align-items: center;
       gap: 16px;
-      animation: yodev-slide-in-right 0.3s ease-out;
+      animation: yodev-slide-in-right 0.3s ease-out backwards;
       border-left: 4px solid #6e9fff;
       max-width: 360px;
     }
