@@ -513,6 +513,10 @@ function handleIframeMessage(event) {
     const currentUser = discourseApi?.getCurrentUser();
 
     if (!currentUser) {
+      // Close the remote jobs modal first to avoid visual conflict
+      const remoteJobsModal = document.getElementById('remote-jobs-modal');
+      if (remoteJobsModal) remoteJobsModal.remove();
+
       // Store pending action so we can resume after login
       sessionStorage.setItem('yodev_pending_app', JSON.stringify({
         appId: 'jobalerts',
