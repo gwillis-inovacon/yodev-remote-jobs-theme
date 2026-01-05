@@ -368,7 +368,7 @@ function showYoDevLoginModal(config) {
   const overlay = document.createElement('div');
   overlay.className = 'yodev-login-overlay';
   overlay.innerHTML = `
-    <div class="yodev-login-modal">
+    <div class="yodev-login-modal" style="max-width: 420px; width: 90%; opacity: 0;">
       <button class="yodev-login-close" aria-label="Close">&times;</button>
       <div class="yodev-login-content">
         <img src="${config.appLogo}" alt="${config.appName}" class="yodev-login-logo" />
