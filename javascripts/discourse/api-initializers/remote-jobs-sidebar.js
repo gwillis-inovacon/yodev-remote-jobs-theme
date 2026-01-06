@@ -26,33 +26,29 @@ function injectYoDevLoginStyles() {
   const styles = document.createElement('style');
   styles.id = 'yodev-remotejobs-styles';
   styles.textContent = `
+    /* Brutalist Design System */
     .yodev-remotejobs-overlay {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(8px);
+      background: rgba(0, 0, 0, 0.85);
       z-index: 10000;
       display: flex;
       align-items: center;
       justify-content: center;
       opacity: 0;
+      font-family: 'JetBrains Mono', monospace;
     }
 
     .yodev-remotejobs-overlay.is-visible {
-      animation: yodev-remotejobs-fade-in 0.2s ease-out forwards;
+      animation: yodev-remotejobs-fade-in 0.15s ease-out forwards;
     }
 
     @keyframes yodev-remotejobs-fade-in {
       from { opacity: 0; }
       to { opacity: 1; }
-    }
-
-    @keyframes yodev-remotejobs-slide-up {
-      from { opacity: 0; transform: translateY(20px) scale(0.95); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     @keyframes yodev-remotejobs-slide-in-right {
@@ -61,45 +57,54 @@ function injectYoDevLoginStyles() {
     }
 
     .yodev-remotejobs-modal {
-      background: #1a1a2e;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
+      background: var(--secondary, #1a1a2e);
+      border: 4px solid var(--primary, #ffffff);
+      border-radius: 0;
       padding: 32px;
       max-width: 420px;
       width: 90%;
       max-height: 90vh;
       overflow-y: auto;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      box-shadow: 8px 8px 0px 0px var(--primary, #ffffff);
       position: relative;
       opacity: 0;
-      transform: translateY(20px) scale(0.95);
+      font-family: 'JetBrains Mono', monospace;
     }
 
     .yodev-remotejobs-overlay.is-visible .yodev-remotejobs-modal {
-      animation: yodev-remotejobs-slide-up 0.3s ease-out forwards;
+      animation: yodev-remotejobs-slide-up 0.2s ease-out forwards;
+    }
+
+    @keyframes yodev-remotejobs-slide-up {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .yodev-remotejobs-close {
       position: absolute;
-      top: 16px;
-      right: 16px;
-      background: none;
-      border: none;
-      font-size: 24px;
+      top: 12px;
+      right: 12px;
+      background: transparent;
+      border: 2px solid var(--primary, #ffffff);
+      font-size: 20px;
       cursor: pointer;
-      color: #888;
+      color: var(--primary, #ffffff);
       width: 32px;
       height: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 8px;
+      border-radius: 0;
       transition: all 0.2s;
+      font-weight: 900;
     }
 
     .yodev-remotejobs-close:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
+      background: #22d3ee;
+      border-color: #22d3ee;
+      color: #000000;
+      box-shadow: 4px 4px 0px 0px var(--primary, #ffffff);
+      transform: translate(-2px, -2px);
     }
 
     .yodev-remotejobs-content {
@@ -112,22 +117,25 @@ function injectYoDevLoginStyles() {
     .yodev-remotejobs-logo {
       width: 64px;
       height: 64px;
-      border-radius: 12px;
+      border-radius: 0;
       margin-bottom: 16px;
+      border: 2px solid var(--primary, #ffffff);
     }
 
     .yodev-remotejobs-title {
       font-size: 24px;
-      font-weight: 700;
-      color: #ffffff;
+      font-weight: 900;
+      color: var(--primary, #ffffff);
       margin: 0 0 8px 0;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
     }
 
     .yodev-remotejobs-subtitle {
       font-size: 14px;
-      color: #a0a0b0;
+      color: var(--primary-medium, #a0a0b0);
       margin: 0 0 24px 0;
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
     .yodev-remotejobs-features {
@@ -143,16 +151,17 @@ function injectYoDevLoginStyles() {
       align-items: center;
       gap: 6px;
       padding: 6px 12px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      font-size: 13px;
-      color: #e0e0e0;
+      background: transparent;
+      border: 2px solid var(--primary, #ffffff);
+      border-radius: 0;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary, #ffffff);
     }
 
     .yodev-remotejobs-feature i {
       font-size: 14px;
-      color: #6e9fff;
+      color: #22d3ee;
     }
 
     .yodev-remotejobs-member-section {
@@ -162,17 +171,18 @@ function injectYoDevLoginStyles() {
 
     .yodev-remotejobs-member-title {
       font-size: 14px;
-      font-weight: 600;
-      color: #ffffff;
+      font-weight: 700;
+      color: var(--primary, #ffffff);
       margin: 0 0 12px 0;
+      text-transform: uppercase;
     }
 
     .yodev-remotejobs-btn {
       width: 100%;
       padding: 12px 24px;
-      border-radius: 8px;
+      border-radius: 0;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
       display: flex;
@@ -180,19 +190,21 @@ function injectYoDevLoginStyles() {
       justify-content: center;
       gap: 8px;
       text-decoration: none;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
     }
 
     .yodev-remotejobs-btn-primary {
-      background: linear-gradient(135deg, #5b8def 0%, #6e9fff 100%);
-      color: #ffffff;
-      border: none;
-      box-shadow: 0 4px 12px rgba(91, 141, 239, 0.3);
+      background: #22d3ee;
+      color: #000000;
+      border: 2px solid var(--primary, #ffffff);
+      box-shadow: 4px 4px 0px 0px var(--primary, #ffffff);
     }
 
     .yodev-remotejobs-btn-primary:hover {
-      background: linear-gradient(135deg, #4a7de0 0%, #5b8def 100%);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(91, 141, 239, 0.4);
+      background: #06b6d4;
+      transform: translate(-2px, -2px);
+      box-shadow: 8px 8px 0px 0px var(--primary, #ffffff);
     }
 
     .yodev-remotejobs-divider {
@@ -205,65 +217,69 @@ function injectYoDevLoginStyles() {
 
     .yodev-remotejobs-divider-line {
       flex: 1;
-      height: 1px;
-      background: rgba(255, 255, 255, 0.15);
+      height: 2px;
+      background: var(--primary, #ffffff);
     }
 
     .yodev-remotejobs-divider-text {
       font-size: 12px;
-      color: #666;
+      font-weight: 700;
+      color: var(--primary, #ffffff);
+      text-transform: uppercase;
     }
 
     .yodev-remotejobs-register-section {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
+      background: transparent;
+      border: 2px solid var(--primary, #ffffff);
+      border-radius: 0;
       padding: 16px;
       width: 100%;
     }
 
     .yodev-remotejobs-register-text {
       font-size: 13px;
-      color: #909099;
+      color: var(--primary-medium, #909099);
       margin: 0 0 8px 0;
-      line-height: 1.4;
+      line-height: 1.6;
     }
 
     .yodev-remotejobs-register-link {
-      color: #6e9fff;
-      font-weight: 600;
+      color: #22d3ee;
+      font-weight: 700;
       text-decoration: none;
-      transition: color 0.2s;
+      transition: all 0.2s;
+      border-bottom: 2px solid #22d3ee;
     }
 
     .yodev-remotejobs-register-link:hover {
-      color: #8fb3ff;
-      text-decoration: underline;
+      color: #06b6d4;
+      border-bottom-color: #06b6d4;
     }
 
-    /* Toast notification */
+    /* Toast notification - Brutalist */
     .yodev-toast {
       position: fixed;
       bottom: 24px;
       right: 24px;
-      background: #1a1a2e;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
+      background: var(--secondary, #1a1a2e);
+      border: 4px solid var(--primary, #ffffff);
+      border-radius: 0;
       padding: 16px 20px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      box-shadow: 8px 8px 0px 0px var(--primary, #ffffff);
       z-index: 10001;
       display: flex;
       align-items: center;
       gap: 16px;
       animation: yodev-remotejobs-slide-in-right 0.3s ease-out backwards;
-      border-left: 4px solid #6e9fff;
       max-width: 360px;
+      font-family: 'JetBrains Mono', monospace;
     }
 
     .yodev-toast-icon {
       width: 40px;
       height: 40px;
-      border-radius: 8px;
+      border-radius: 0;
+      border: 2px solid var(--primary, #ffffff);
       flex-shrink: 0;
     }
 
@@ -273,34 +289,38 @@ function injectYoDevLoginStyles() {
 
     .yodev-toast-title {
       font-size: 14px;
-      font-weight: 600;
-      color: #ffffff;
+      font-weight: 900;
+      color: var(--primary, #ffffff);
       margin: 0 0 4px 0;
+      text-transform: uppercase;
     }
 
     .yodev-toast-message {
-      font-size: 13px;
-      color: #a0a0b0;
+      font-size: 12px;
+      color: var(--primary-medium, #a0a0b0);
       margin: 0;
     }
 
     .yodev-toast-btn {
       padding: 8px 16px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 600;
+      border-radius: 0;
+      font-size: 12px;
+      font-weight: 700;
       cursor: pointer;
-      background: linear-gradient(135deg, #5b8def 0%, #6e9fff 100%);
-      color: #ffffff;
-      border: none;
+      background: #22d3ee;
+      color: #000000;
+      border: 2px solid var(--primary, #ffffff);
       white-space: nowrap;
       transition: all 0.2s;
-      box-shadow: 0 2px 8px rgba(91, 141, 239, 0.3);
+      box-shadow: 4px 4px 0px 0px var(--primary, #ffffff);
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
     }
 
     .yodev-toast-btn:hover {
-      background: linear-gradient(135deg, #4a7de0 0%, #5b8def 100%);
-      transform: translateY(-1px);
+      background: #06b6d4;
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px 0px var(--primary, #ffffff);
     }
 
     .yodev-toast-close {
@@ -311,14 +331,15 @@ function injectYoDevLoginStyles() {
       border: none;
       font-size: 16px;
       cursor: pointer;
-      color: #666;
+      color: var(--primary, #ffffff);
       padding: 4px;
       line-height: 1;
       transition: color 0.2s;
+      font-weight: 900;
     }
 
     .yodev-toast-close:hover {
-      color: #fff;
+      color: #22d3ee;
     }
   `;
   document.head.appendChild(styles);
